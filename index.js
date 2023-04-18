@@ -32,15 +32,17 @@ app.get("/api/:date_string", (req, res) => {
   if (/\d{5,}/.test(dateString)) {
     let dateInt = parseInt(dateString);
     //Date regards numbers as unix timestamps, strings are processed differently
-    res.json({ unix: dateString, utc: new Date(dateInt).toUTCString() });
+    // res.json({ unix: dateString, utc: new Date(dateInt).toUTCString() });
+    res.json({ unix: dateInt, utc: new Date(dateInt).toUTCString() });
   } else {
-    let dateObject = new Date(dateString);
+    let dateObject = new Date(dateInt);
 
     if (dateObject.toString() === "Invalid Date") {
       res.json({ error: "Invalid Date" });
     } else {
       res.json({ unix: dateObject.valueOf(), utc: dateObject.toUTCString() });
     }
+    console.log({ unix: dateObject.valueOf(), utc: dateObject.toUTCString() })
   }
 });
 
@@ -53,3 +55,13 @@ app.get("/api/:date_string", (req, res) => {
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
+
+
+
+
+
+
+
+
+
+
