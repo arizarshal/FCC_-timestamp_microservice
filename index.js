@@ -25,31 +25,52 @@ app.get("/api/hello", function (req, res) {
 
 
 app.get("/api/:date_string", (req, res) => {
-  let dateString = req.params.date_string;
+  let dateString = req.params.date_string === "" ? new Date() : req.params.date_string;
+  console.log(dateString);
+  
+  let dateInt = parseInt(dateString);
 
-  //A 4 digit number is a valid ISO-8601 for the beginning of that year
-  //5 digits or more must be a unix time, until we reach a year 10,000 problem
-  if (/\d{5,}/.test(dateString)) {
-    let dateInt = parseInt(dateString);
-    //Date regards numbers as unix timestamps, strings are processed differently
-    res.json({ unix: dateInt, utc: new Date(dateInt).toUTCString() });
+  if (/\d{,}/.test(dateString)) {
+    // let emptyDate = parse(dateString)
+    return res.json({ unix: dateInt, utc: new Date(dateInt).toUTCString()})
   } else {
-    let dateObject = new Date(dateString);
-
-    if (dateObject.toString() === "Invalid Date") {
-      res.json({ error: "Invalid Date" });
+    
+    //A 4 digit number is a valid ISO-8601 for the beginning of that year
+    //5 digits or more must be a unix time, until we reach a year 10,000 problem
+    if (/\d{5,}/.test(dateString)) {
+      //Date regards numbers as unix timestamps, strings are processed differently
+      res.json({ unix: dateInt, utc: new Date(dateInt).toUTCString() });
     } else {
-      res.json({ unix: dateObject.valueOf(), utc: dateObject.toUTCString() });
+      let dateObject = new Date(dateString);
+  
+      if (dateObject.toString() === "Invalid Date") {
+        res.json({ error: "Invalid Date" });
+      } else {
+        res.json({ unix: dateObject.valueOf(), utc: dateObject.toUTCString() });
+      }
+  
     }
   }
+
 });
 
+app.get('/api', (req, res) => {
+  const newDate = new Date()
+  // const dateObject2 = new Date(new Date)
+  // const atUnix = Math.floor(newDate) / 1000
+  // let dateInt2 = newDate.toString();
+  res.json({ unix: newDate.valueOf(), utc: newDate.toUTCString().toString()})
+})
 
 
 
+const PORT = 3000
+var listener = app.listen(PORT, function () {
+  console.log('Your app is listening on port ' + listener.address().port);
+});
 
 
 // listen for requests :)
-var listener = app.listen(process.env.PORT, function () {
-  console.log('Your app is listening on port ' + listener.address().port);
-});
+// var listener = app.listen(process.env.PORT, function () {
+//   console.log('Your app is listening on port ' + listener.address().port);
+// });
